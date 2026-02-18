@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Configuration Modèles/API</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Configuration des modèles</h1>
+    <a href="/">← Retour dashboard</a>
+  </header>
+
+  <section class="card">
+    <p>Configuration recommandée selon ta demande: <b>Synthèse = Anthropic</b>, <b>Tri = Mistral ou Kimi 2.5</b>.</p>
+    <form method="post" action="/settings" class="settings-form">
+      <h2>Anthropic (synthèse)</h2>
+      <label>API Key</label>
+      <input type="password" name="anthropic_key" value="{{ configs.get('anthropic').api_key if configs.get('anthropic') else '' }}" />
+      <label>Model</label>
+      <input type="text" name="anthropic_model" value="{{ configs.get('anthropic').model_name if configs.get('anthropic') else 'claude-sonnet-4-6' }}" />
+      <label>Base URL</label>
+      <input type="text" name="anthropic_base_url" value="{{ configs.get('anthropic').base_url if configs.get('anthropic') else 'https://api.anthropic.com' }}" />
+
+      <h2>Mistral (classification)</h2>
+      <label>API Key</label>
+      <input type="password" name="mistral_key" value="{{ configs.get('mistral').api_key if configs.get('mistral') else '' }}" />
+      <label>Model</label>
+      <input type="text" name="mistral_model" value="{{ configs.get('mistral').model_name if configs.get('mistral') else 'mistral-large-latest' }}" />
+      <label>Base URL</label>
+      <input type="text" name="mistral_base_url" value="{{ configs.get('mistral').base_url if configs.get('mistral') else 'https://api.mistral.ai/v1' }}" />
+
+      <h2>Kimi 2.5 (classification alternative)</h2>
+      <label>API Key</label>
+      <input type="password" name="kimi_key" value="{{ configs.get('kimi').api_key if configs.get('kimi') else '' }}" />
+      <label>Model</label>
+      <input type="text" name="kimi_model" value="{{ configs.get('kimi').model_name if configs.get('kimi') else 'kimi-2.5' }}" />
+      <label>Base URL</label>
+      <input type="text" name="kimi_base_url" value="{{ configs.get('kimi').base_url if configs.get('kimi') else 'https://api.moonshot.ai/v1' }}" />
+
+      <h2>Rôles actifs</h2>
+      <label>Provider pour synthèse</label>
+      <select name="synthesis_provider">
+        <option value="anthropic">anthropic</option>
+        <option value="mistral">mistral</option>
+        <option value="kimi">kimi</option>
+      </select>
+
+      <label>Provider pour tri/classification</label>
+      <select name="classification_provider">
+        <option value="mistral">mistral</option>
+        <option value="kimi">kimi</option>
+        <option value="anthropic">anthropic</option>
+      </select>
+
+      <button type="submit">Sauvegarder</button>
+    </form>
+  </section>
+</body>
+</html>
