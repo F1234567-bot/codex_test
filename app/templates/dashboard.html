@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Veille Énergie Québec</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header>
+    <h1>Dashboard - Veille Énergie Québec</h1>
+    <div class="header-actions">
+      <form method="post" action="/api/run-daily">
+        <button type="submit">Lancer la veille maintenant</button>
+      </form>
+      <a href="/settings">Configurer les modèles/API</a>
+    </div>
+  </header>
+
+  {% if briefing %}
+  <section class="card">
+    <h2>Briefing du {{ briefing.date_key }}</h2>
+    {% if briefing.used_fallback %}
+      <p class="warning">Mode fallback actif: ajoutez vos clés API dans Settings pour une synthèse LLM complète.</p>
+    {% endif %}
+    <h3>Résumé exécutif</h3>
+    <pre>{{ briefing.executive_summary }}</pre>
+    <h3>Radar opportunités</h3>
+    <pre>{{ briefing.opportunity_radar }}</pre>
+    <h3>Alertes critiques</h3>
+    <pre>{{ briefing.critical_alerts }}</pre>
+    <h3>Recommandations</h3>
+    <pre>{{ briefing.recommendations }}</pre>
+  </section>
+
+  <section class="card">
+    <h2>Actions du matin</h2>
+    <table>
+      <thead>
+        <tr><th>Action</th><th>Owner</th><th>Statut</th><th>Maj</th></tr>
+      </thead>
+      <tbody>
+      {% for action in actions %}
+        <tr>
+          <td>{{ action.title }}</td>
+          <td>{{ action.owner }}</td>
+          <td>{{ action.status }}</td>
+          <td>
+            <form method="post" action="/actions/{{ action.id }}/status">
+              <select name="status">
+                <option value="todo">todo</option>
+                <option value="in_progress">in_progress</option>
+                <option value="done">done</option>
+              </select>
+              <button type="submit">Enregistrer</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% else %}
+    <section class="card"><p>Aucun briefing pour le moment. Cliquez sur "Lancer la veille maintenant".</p></section>
+  {% endif %}
+
+  <section class="card">
+    <h2>Flux d'articles récents</h2>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Source</th><th>Titre</th><th>Catégorie</th><th>Impact</th><th>Confiance</th></tr>
+      </thead>
+      <tbody>
+      {% for article in articles %}
+        <tr>
+          <td>{{ article.published_at or article.created_at }}</td>
+          <td>{{ article.source }}</td>
+          <td><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></td>
+          <td>{{ article.category }}</td>
+          <td>{{ article.impact_score }}</td>
+          <td>{{ article.confidence }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
